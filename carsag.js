@@ -627,94 +627,266 @@ const carMarket = {
 //* getAgencyByName
 //? @param {string} - name
 //? @return {Object} - agency object
+function getAgencyByName(name) {
+  return carMarket.sellers.find((agency) => agency.name === name);
+}
 
 //* getAgencyIdByName
 //? @param {String} - name
 //? @return {String} - agencyId
+function getAgencyIdByName(name) {
+  const agency = carMarket.sellers.find((agency) => agency.name === name);
+  return agency.agencyId;
+}
 
 //* getAllAgenciesName
 //? @param {}
 //? @return {string[]} - agenciesNameArr - Array of all agencies name
-
+function getAllAgenciesName() {
+  const nameArr = carMarket.sellers.map((agency) => agency.agencyName);
+  return nameArr;
+}
 //* getAllCarToBuy
 //? @param {}
 //? @return {object[]} - allCarsToBuy - arrays of all cars objects
+function getAllCarToBuy() {
+  const carArr = [];
+  carMarket.sellers.forEach((agency) => {
+    agency.cars.forEach((brand) => {
+      carArr.push(...brand.models);
+    });
+  });
+
+  return carArr;
+}
 
 //* getAllCarToBuyByAgencyId
 //? @param {string} - id of agency
 //? @return {object[]} - carsArray - arrays of all models objects of specific agency
+function getAllCarToBuyByAgencyId(id) {
+  let target = carMarket.sellers.find((agency) => agency.agencyId === id);
+  const carArr = [];
+  target.cars.forEach((brand) => {
+    carArr.push(...brand.models);
+  });
+  return carArr;
+}
+
+// console.log(getAllCarToBuyByAgencyId(`Plyq5M5AZ`));
 
 //* getAllBrandsToBuyAgencyId
 //? @param {string} - agencyId -  id of agency
 // ? @return {string[]} - arrOfBrands - arrays of all brands name in specific agency
+function getAllBrandsToBuyAgencyId(id) {
+  let target = carMarket.sellers.find((agency) => agency.agencyId === id);
+  const carArr = [];
+  target.cars.forEach((car) => {
+    carArr.push(car.brand);
+  });
+  return carArr;
+}
+
+// console.log(getAllBrandsToBuyAgencyId(`Plyq5M5AZ`));
 
 //! customer func's
+
 //todo getters
+
 //* getCustomerByName
 //? @param {string} - name
 //? @return {Object} - customer
+function getCustomerByName(name) {
+  return carMarket.customers.find((customer) => customer.name === name);
+}
 
 //* getCustomerIdByName
 //? @param {name}
 //? @return {String} - customerId - The customer id
+function getCustomerIdByName(name) {
+  const customer = carMarket.customers.find(
+    (customer) => customer.name === name
+  );
+  return customer.id;
+}
 
 //* getAllCustomersNames
 //? @param {}
 //? @return {string[]} - customersNameArr -  Array of all customers name
 
+function getAllCustomersNames() {
+  const nameArr = carMarket.customers.map((customer) => customer.name);
+  return nameArr;
+}
+
 //* getAllCustomerCars
 //? @param {id} - costumerId - costumer id
 //? @return {object[]} - customerCarsArr -  Array of all customer cars object
+function getAllCustomerCars(id) {
+  let target = carMarket.customers.find((customer) => customer.id === id);
+  const carArr = [];
+  target.cars.forEach((cars) => {
+    carArr.push(cars);
+  });
+  return carArr;
+}
+// console.log(getAllCustomerCars(`5x2tMcX4R`));
 
 //* getCustomerCash
 //? @param {id} - costumerId - costumer id
 //? @return {number} - CustomerCash
+function getCustomerCash(id) {
+  let target = carMarket.customers.find((customer) => customer.id === id);
+  return target.cash;
+}
+// console.log(getCustomerCash(`5x2tMcX4R`));
 //!------------------------------------------------------------
 //*  1) setPropertyBrandToAllCars
 //? set all cars model object the current brand
 //? @param {}
 //? @return {}
+function setPropertyBrandToAllCars() {
+  carMarket.sellers.forEach((seller) => {
+    seller.cars.forEach((brand) => {
+      brand.models.forEach((car) => {
+        car.brand = brand.brand;
+      });
+    });
+  });
+  const sellerCarArr = getAllCarToBuy();
+  carMarket.customers.forEach((customer) => {
+    customer.cars.forEach((car) => {
+      const sellerCar = sellerCarArr.find(
+        (tempCar) => tempCar.name === car.name
+      );
+      if (sellerCar) car.brand = sellerCar.brand;
+    });
+  });
+}
+function getAllCustomerCars() {
+  const carArr = [];
+  carMarket.customers.forEach((customer) => {
+    carArr.push(...customer.cars);
+  });
 
+  return carArr;
+}
+// setPropertyBrandToAllCars();
+// console.log(getAllCustomerCars());
 //todo Agency setters
 
 //* setNewCarToAgency
 //? @param {string} - id of agency
 //? @param {object} - carObject
 //? @return {}
+function setNewCarToAgency(id, carInfo) {
+  let target = carMarket.sellers.find((agency) => agency.agencyId === id);
+  if (target) {
+    let carbrand = target.cars.find((brand) => brand.brand === carInfo.brand);
+    if (carbrand) {
+      carbrand.models.push(carInfo);
+    } else target.cars.push({ brand: carInfo.brand, models: [carInfo] });
+  } else console.log("No agency found");
+}
+// setNewCarToAgency("Plyq5M5AZ", {
+//   name: "X7",
+//   brand: "bmw",
+//   year: 2020,
+//   price: 1370000,
+//   carNumber: "AZ3Z4",
+//   ownerId: "Plyq5M5AZ",
+// });
+// console.log(getAllCarToBuy());
 
 //* deleteCarFromAgency
 //? @param {string} - id of agency
 //? @param {string} -  Car id
 // ? @return {}
+function deleteCarFromAgency(id, carID) {
+  let target = carMarket.sellers.find((agency) => agency.agencyId === id);
+  target.cars.forEach((brand) => {
+    brand.models = brand.models.filter((car) => car.carNumber !== carID);
+  });
+}
+// deleteCarFromAgency(`Plyq5M5AZ`, `AZJZ4`);
+// console.log(getAllCarToBuy());
 
 //* decrementOrIncrementCashOfAgency
 //? @param {string} - agencyId
 //? @param {number} - amount - negative or positive amount
 // ? @return {number} - agencyCash
+function decrementOrIncrementCashOfAgency(id, amount) {
+  let target = carMarket.sellers.find((agency) => agency.agencyId === id);
+  target.cash += amount;
+  return target.cash;
+}
+// console.log(decrementOrIncrementCashOfAgency(`Plyq5M5AZ`, -12000));
 
 //* decrementOrIncrementCreditOfAgency
 //? @param {string} - agencyId
 //? @param {number} - amount - negative or positive amount
 // ? @return {number} - agencyCash
+function decrementOrIncrementCreditOfAgency(id, amount) {
+  let target = carMarket.sellers.find((agency) => agency.agencyId === id);
+  target.credit += amount;
+  return target.credit;
+}
+// console.log(decrementOrIncrementCreditOfAgency(`Plyq5M5AZ`, -12000));
 
 //* setAmountOfCarsToBuyToAllAgency's
 //? set a new property amountOfCars to all agency's, that represent the amount of cars available in the agency.
+
 //? @param {}
 // ? @return {objects[]} - sellers - array of all agency's
-
+function setAmountOfCarsToBuyToAllAgency() {
+  carMarket.sellers.forEach((seller) => {
+    seller.carAmount = 0;
+    seller.cars.forEach((brand) => {
+      seller.carAmount += brand.models.length;
+    });
+    return carMarket.sellers;
+  });
+}
+// setAmountOfCarsToBuyToAllAgency();
 //todo setters
 
 //* setCarToCostumer
 //? @param {string} - costumerId
 //? @param {object} - carObject
 //? @return {object[]} - allCarsOfCostumer
+function setCarToCostumer(id, carInfo) {
+  let target = carMarket.customers.find((customer) => customer.id === id);
+  target.cars.push(carInfo);
+  return target.cars;
+}
+
+// console.log(
+//   setCarToCostumer("BGzHhjnE8", {
+//     name: "X7",
+//     brand: "bmw",
+//     year: 2020,
+//     price: 1370000,
+//     carNumber: "AZ3Z4",
+//     ownerId: "Plyq5M5AZ",
+//   })
+// );
 
 //* deleteCarOfCostumer
 //? @param {string} - costumerId
 //? @param {string} - carId
 //? @return {object[]} - allCarsOfCostumer
-
+function deleteCarOfCostumer(id, carID) {
+  let target = carMarket.customers.find((customer) => customer.id === id);
+  target.cars.filter((car) => car.carNumber !== carID);
+  return target.cars;
+}
+console.log(deleteCarOfCostumer(`2RprZ1dbL`, `WIh0U`));
 //* decrementOrIncrementCashOfCostumer
 //? @param {string} - costumerId
 //? @param {number} - amount - negative or positive amount
 // ? @return {number} - costumerCash
+function decrementOrIncrementCashOfCostumer(id, amount) {
+  let target = carMarket.customers.find((customer) => customer.id === id);
+  target.cash += amount;
+  return target.cash;
+}
+// console.log(decrementOrIncrementCashOfCostumer(`BGzHhjnE8`, -10000));
