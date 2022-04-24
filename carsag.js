@@ -633,7 +633,7 @@ function getAgencyByName(name) {
 
 //* getAgencyIdByName
 //? @param {String} - name
-//? @return {String} - agencyId
+//? @return {String} - Idagency
 function getAgencyIdByName(name) {
   const agency = carMarket.sellers.find((agency) => agency.name === name);
   return agency.agencyId;
@@ -664,9 +664,9 @@ function getAllCarToBuy() {
 //? @param {string} - id of agency
 //? @return {object[]} - carsArray - arrays of all models objects of specific agency
 function getAllCarToBuyByAgencyId(id) {
-  let target = carMarket.sellers.find((agency) => agency.agencyId === id);
+  let targetAgency = carMarket.sellers.find((agency) => agency.agencyId === id);
   const carArr = [];
-  target.cars.forEach((brand) => {
+  targetAgency.cars.forEach((brand) => {
     carArr.push(...brand.models);
   });
   return carArr;
@@ -678,9 +678,9 @@ function getAllCarToBuyByAgencyId(id) {
 //? @param {string} - agencyId -  id of agency
 // ? @return {string[]} - arrOfBrands - arrays of all brands name in specific agency
 function getAllBrandsToBuyAgencyId(id) {
-  let target = carMarket.sellers.find((agency) => agency.agencyId === id);
+  let targetAgency = carMarket.sellers.find((agency) => agency.agencyId === id);
   const carArr = [];
-  target.cars.forEach((car) => {
+  targetAgency.cars.forEach((car) => {
     carArr.push(car.brand);
   });
   return carArr;
